@@ -1,0 +1,57 @@
+# 服务配置
+server:
+  port: 8095 # 端口号
+  mode: local # 服务运行模式
+  router-prefix: "/api" # 路由前缀
+  use-multipoint: false # 是否使用多点登录
+  use-oss: false # 是否使用 oss
+  file-path: /files # 未使用 oss 保存文件的路径前缀
+
+# MySQL 数据库配置
+mysql:
+  prefix: "" # 数据库表前缀
+  port: 3306 # MySQL 服务器端口号
+  config: charset=utf8mb4&parseTime=True&loc=Local # MySQL 连接配置参数
+  db-name: axapi # 数据库名称
+  username: root # 数据库用户名
+  password: 123456 # 数据库密码
+  engine: "" # 数据库引擎
+  log-mode: error # MySQL 日志模式为错误日志
+  max-idle-conns: 10 # 数据库最大空闲连接数
+  max-open-conns: 100 # 数据库最大打开连接数
+  singular: true # 是否使用单数表名
+  log-zap: false # 是否启用 Zap 日志库
+
+# Redis 配置
+redis:
+  addr: 127.0.0.1:6379 # Redis 服务器地址和端口号
+  password: "" # Redis 访问密码
+  db: 0 # Redis 数据库编号
+
+# JWT 配置
+jwt:
+  signing-key: axliupore # 密钥
+  issuer: axliu # 发行者
+  expires-time: 7 # 过期天数
+  buffer-time: 1 # 缓冲时间
+
+# Zap日志库配置
+zap:
+  level: info # 设置最低的日志级别为info，只记录info级别及以上的日志消息
+  prefix: '[github.com/axliupore/gin-template]' # 为日志消息添加的前缀，标识日志消息的来源
+  format: console # 指定日志输出格式为控制台格式
+  directory: log # 指定日志文件的存储目录为log，即日志文件保存在log目录下
+  encode-level: LowercaseColorLevelEncoder # 配置日志级别的编码方式为小写的带颜色的格式
+  stacktrace-key: stacktrace # 设置堆栈跟踪信息的键名为stacktrace，用于记录错误时的堆栈信息
+  max-age: 0 # 设置日志文件的最大保留时间为0，表示不保留历史日志
+  show-line: true # 在日志中显示代码行号
+  log-in-console: true # 同时将日志输出到控制台
+
+# 阿里云oss配置
+aliyun-oss:
+  endpoint: yourEndpoint # 阿里云OSS服务的域名或者IP地址，用于指定访问OSS的终端节点
+  access-key-id: yourAccessKeyId  # 阿里云OSS的访问密钥 ID，用于身份验证和授权
+  access-key-secret: yourAccessKeySecret  # 阿里云OSS的访问密钥Secret，与访问密钥ID一同用于身份验证和授权
+  bucket-name: yourBucket # OSS存储桶的名称，用于指定存储数据的容器
+  bucket-url: yourBucketUrl  # 存储桶的访问URL，用于指定存储桶的外网访问地址
+  base-path: yourBasePath # 存储桶下的基础路径，用于指定存储对象的基础目录
