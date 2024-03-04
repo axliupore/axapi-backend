@@ -13,7 +13,7 @@ import "github.com/axliupore/axapi/axapi-backend/initialize"
 // @securityDefinitions.apiKey ApiKeyAuth
 // @in 						   header
 // @name 					   a-token
-// @BasePath 				   /api
+// @BasePath 				   http://localhost:8095
 func main() {
 	initialize.InitConfig()
 }

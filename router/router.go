@@ -40,6 +40,7 @@ func Router() *gin.Engine {
 
 	{
 		InitUserRouter(publicGroup)
+		InitEmailRouter(publicGroup)
 	}
 
 	return router

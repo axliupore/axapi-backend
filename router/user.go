@@ -12,13 +12,13 @@ func InitUserRouter(publicGroup *gin.RouterGroup) {
 		// 账号注册
 		userRouter.POST("register/account", api.UserRegisterAccount)
 		// 邮箱注册
-		userRouter.POST("register/email")
+		userRouter.POST("register/email", api.UserRegisterEmail)
 		// 账号登录
 		userRouter.POST("login/account", api.UserLoginAccount)
 		// 邮箱登录
-		userRouter.POST("login/email")
-		// 获取用户的登录态
+		userRouter.POST("login/email", api.UserLoginEmail)
 		userRouter.Use(middleware.JWT())
+		// 获取用户的登录态
 		userRouter.GET("get", api.GetUser)
 	}
 }

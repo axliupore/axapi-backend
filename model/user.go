@@ -27,6 +27,14 @@ func NewUserAccount(account string) *User {
 	return user
 }
 
+func NewUserEmail(email string) *User {
+	user := &User{
+		Email: email,
+	}
+	user.init()
+	return user
+}
+
 func (u *User) init() {
 	u.Gender = 0
 	u.Role = "user"

@@ -18,6 +18,7 @@ const (
 	ErrorAdmin            = 10011 // 权限不足
 	ErrorDelete           = 10012 // 删除失败
 	ErrorFile             = 10013 // 上传文件失败
+	ErrorEmail            = 10014 // 邮件发送失败
 
 	ErrorRegister = 20001 // 注册失败
 	ErrorNotLogin = 20002 // 未登录

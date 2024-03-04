@@ -28,11 +28,25 @@ definitions:
       username:
         type: string
     type: object
+  request.Email:
+    properties:
+      code:
+        type: string
+      email:
+        type: string
+    type: object
   request.UserLoginAccount:
     properties:
       account:
         type: string
       password:
+        type: string
+    type: object
+  request.UserLoginEmail:
+    properties:
+      code:
+        type: string
+      email:
         type: string
     type: object
   request.UserRegisterAccount:
@@ -42,6 +56,15 @@ definitions:
       checkPassword:
         type: string
       password:
+        type: string
+      username:
+        type: string
+    type: object
+  request.UserRegisterEmail:
+    properties:
+      code:
+        type: string
+      email:
         type: string
       username:
         type: string
@@ -69,6 +92,32 @@ info:
   title: Ax-API 接口文档
   version: "1.0"
 paths:
+  /api/email/send:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 邮箱
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Email'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回信息
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      summary: 获取验证码
+      tags:
+      - email
   /api/user/get:
     get:
       consumes:
@@ -117,7 +166,35 @@ paths:
                 msg:
                   type: string
               type: object
-      summary: 用户登录
+      summary: 用户根据账号登录
+      tags:
+      - user
+  /api/user/login/email:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 邮箱,验证码
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.UserLoginEmail'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回用户信息,token,过期时间
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.UserLoginResponse'
+                msg:
+                  type: string
+              type: object
+      summary: 用户根据邮箱登录
       tags:
       - user
   /api/user/register/account:
@@ -143,7 +220,33 @@ paths:
                 msg:
                   type: string
               type: object
-      summary: 用户注册
+      summary: 用户根据账号注册
+      tags:
+      - user
+  /api/user/register/email:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 邮箱,验证码,用户名
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.UserRegisterEmail'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回注册信息
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      summary: 用户根据邮箱注册
       tags:
       - user
 securityDefinitions:

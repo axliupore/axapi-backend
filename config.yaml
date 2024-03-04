@@ -55,3 +55,11 @@ aliyun-oss:
   bucket-name: yourBucket # OSS存储桶的名称，用于指定存储数据的容器
   bucket-url: yourBucketUrl  # 存储桶的访问URL，用于指定存储桶的外网访问地址
   base-path: yourBasePath # 存储桶下的基础路径，用于指定存储对象的基础目录
+
+email:
+  sender: '' # 发送者
+  title: '' # 标题
+  smtp: '' # 服务器地址
+  port: 0 # 端口
+  user: '' # 用户名
+  password: '' # 填写密钥

@@ -15,7 +15,7 @@ import (
 
 // UserRegisterAccount
 // @Tags user
-// @Summary  用户注册
+// @Summary  用户根据账号注册
 // @accept   application/json
 // @Produce  application/json
 // @Param    data  body      request.UserRegisterAccount      true  "账号,密码,确认密码,用户名"
@@ -36,8 +36,7 @@ func UserRegisterAccount(c *gin.Context) {
 		response.ErrorMessage(c, utils.Params, "密码不能小于8位或两次密码不一致")
 		return
 	}
-	err = userService.UserRegisterAccount(r)
-	if err != nil {
+	if err = userService.UserRegisterAccount(r); err != nil {
 		global.Log.Error("注册失败!", zap.Error(err))
 		response.ErrorMessage(c, utils.ErrorRegister, err.Error())
 		return
@@ -47,7 +46,7 @@ func UserRegisterAccount(c *gin.Context) {
 
 // UserLoginAccount
 // @Tags     user
-// @Summary  用户登录
+// @Summary  用户根据账号登录
 // @accept   application/json
 // @Produce  application/json
 // @Param    data  body      request.UserLoginAccount      				                  true  "账号,密码"
@@ -154,4 +153,76 @@ func GetUser(c *gin.Context) {
 		return
 	}
 	response.SuccessDetailed(c, "获取成功", loginUser)
+}
+
+// UserRegisterEmail
+// @Tags user
+// @Summary  用户根据邮箱注册
+// @accept   application/json
+// @Produce  application/json
+// @Param    data  body      request.UserRegisterEmail        true  "邮箱,验证码,用户名"
+// @Success  200   {object}  response.Response{msg=string}  		"返回注册信息"
+// @Router   /api/user/register/email [post]
+func UserRegisterEmail(c *gin.Context) {
+	var r *request.UserRegisterEmail
+	err := c.ShouldBindJSON(&r)
+	if err != nil || utils.IsAnyBlank(r.Email, r.Code) {
+		response.ErrorMessage(c, utils.Params, "邮箱和验证码不能为空")
+		return
+	}
+	code, err := emailService.GetCode(r.Email)
+	if err != nil {
+		response.ErrorMessage(c, utils.ErrorLogin, "验证码已过期，请重新获取")
+		return
+	}
+	if code != r.Code {
+		response.ErrorMessage(c, utils.ErrorRegister, "验证码不正确")
+		return
+	}
+	if err = userService.UserRegisterEmail(r); err != nil {
+		global.Log.Error("注册失败!", zap.Error(err))
+		response.ErrorMessage(c, utils.ErrorRegister, err.Error())
+		return
+	}
+	emailService.RemoveEmail(r.Email)
+	response.SuccessMessage(c, "注册成功")
+}
+
+// UserLoginEmail
+// @Tags     user
+// @Summary  用户根据邮箱登录
+// @accept   application/json
+// @Produce  application/json
+// @Param    data  body      request.UserLoginEmail      				                  true  "邮箱,验证码"
+// @Success  200   {object}  response.Response{data=response.UserLoginResponse,msg=string}  "返回用户信息,token,过期时间"
+// @Router   /api/user/login/email [post]
+func UserLoginEmail(c *gin.Context) {
+	var r *request.UserLoginEmail
+	err := c.ShouldBindJSON(&r)
+	if err != nil || utils.IsAnyBlank(r.Email, r.Code) {
+		response.ErrorMessage(c, utils.Params, "邮箱和验证码不能为空")
+		return
+	}
+	code, err := emailService.GetCode(r.Email)
+	if err != nil {
+		response.ErrorMessage(c, utils.ErrorLogin, "验证码已过期，请重新获取")
+		return
+	}
+	if code != r.Code {
+		response.ErrorMessage(c, utils.ErrorRegister, "验证码不正确")
+		return
+	}
+	user, err := userService.UserLoginEmail(r)
+	if err != nil {
+		global.Log.Error("登录失败!", zap.Error(err))
+		response.ErrorMessage(c, utils.ErrorRegister, err.Error())
+		return
+	}
+	if user.Status != 0 {
+		global.Log.Error("登陆失败！用户被禁止登录")
+		response.ErrorMessage(c, utils.Params, "登陆失败！用户被禁止登录")
+		return
+	}
+	emailService.RemoveEmail(r.Email)
+	tokenNext(c, *user)
 }

@@ -13,3 +13,16 @@ type UserLoginAccount struct {
 	Account  string `json:"account"`
 	Password string `json:"password"`
 }
+
+// UserRegisterEmail 用户邮箱注册请求体
+type UserRegisterEmail struct {
+	Email    string
+	Code     string
+	Username string
+}
+
+// UserLoginEmail 用户邮箱登录请求体
+type UserLoginEmail struct {
+	Email string
+	Code  string
+}

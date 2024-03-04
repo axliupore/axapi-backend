@@ -8,4 +8,5 @@ type Config struct {
 	JWT       JWT       `mapstructure:"jwt" yaml:"jwt"`
 	Zap       Zap       `mapstructure:"zap" yaml:"zap"`
 	AliyunOSS AliyunOSS `mapstructure:"aliyun-oss" yaml:"aliyun-oss"`
+	Email     Email     `mapstructure:"email" yaml:"email"`
 }

@@ -20,8 +20,7 @@ func (userService *UserService) UserRegisterAccount(r *request.UserRegisterAccou
 	user := model.NewUserAccount(r.Account)
 	user.Password = utils.BcryptHash(r.Password)
 	user.Username = r.Username
-	err := global.Db.Create(user).Error
-	return err
+	return global.Db.Create(user).Error
 }
 
 // UserLoginAccount 用户账号登录
@@ -44,4 +43,22 @@ func (userService *UserService) GetUser(id int64) (model.User, error) {
 		return user, err
 	}
 	return user, nil
+}
+
+func (userService *UserService) UserRegisterEmail(r *request.UserRegisterEmail) error {
+	if !errors.Is(global.Db.Where("email = ?", r.Email).First(&model.User{}).Error, gorm.ErrRecordNotFound) {
+		return errors.New("邮箱已经存在")
+	}
+	user := model.NewUserEmail(r.Email)
+	user.Account = utils.RandomString(12)
+	user.Username = r.Username
+	return global.Db.Create(user).Error
+}
+
+func (userService *UserService) UserLoginEmail(r *request.UserLoginEmail) (*model.User, error) {
+	var u model.User
+	if err := global.Db.Where("email = ?", r.Email).First(&u).Error; err != nil {
+		return nil, errors.New("邮箱不存在")
+	}
+	return &u, nil
 }
