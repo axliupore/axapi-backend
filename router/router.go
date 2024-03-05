@@ -28,7 +28,9 @@ func Router() *gin.Engine {
 
 	router.Use(middleware.Cors())
 
-	router.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	if global.Config.Server.Mode == "public" {
+		router.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	}
 
 	publicGroup := router.Group(global.Config.Server.RouterPrefix)
 	{
@@ -41,6 +43,7 @@ func Router() *gin.Engine {
 	{
 		InitUserRouter(publicGroup)
 		InitEmailRouter(publicGroup)
+		InitFileRouter(publicGroup)
 	}
 
 	return router

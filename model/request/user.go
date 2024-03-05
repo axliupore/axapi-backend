@@ -26,3 +26,11 @@ type UserLoginEmail struct {
 	Email string
 	Code  string
 }
+
+// UserUpdate 用户修改信息请求体
+type UserUpdate struct {
+	Username string `json:"username"`
+	Profile  string `json:"profile"`
+	Gender   int8   `json:"gender"`
+	Avatar   string `json:"avatar"`
+}
