@@ -227,44 +227,13 @@ func UserLoginEmail(c *gin.Context) {
 	tokenNext(c, *user)
 }
 
-// UploadAvatar
-// @Tags      user
-// @Summary   更新用户头像
-// @Security  ApiKeyAuth
-// @accept    multipart/form-data
-// @Produce   application/json
-// @Param     file  formData  file                     true  "上传文件"
-// @Success   200   {object}  response.Response{msg=string}  "上传用户头像"
-// @Router    /api/user/avatar [post]
-func UploadAvatar(c *gin.Context) {
-	_, fileHeader, err := c.Request.FormFile("file")
-	if err != nil {
-		response.Error(c, utils.Params)
-		return
-	}
-	id := utils.GetUserId(c)
-	// 使用使用 oss
-	if global.Config.Server.UseOSS {
-		if err := userService.UserAvatar(id, fileHeader); err != nil {
-			response.Error(c, utils.ErrorFile)
-			return
-		}
-	} else {
-		if err := userService.UserAvatarLocal(id, fileHeader); err != nil {
-			response.Error(c, utils.ErrorFile)
-			return
-		}
-	}
-	response.SuccessMessage(c, "上传成功")
-}
-
 // UserUpdate
 // @Tags      user
 // @Summary   更新用户信息
 // @Security  ApiKeyAuth
 // @accept    application/json
 // @Produce   application/json
-// @Param     data  body      request.UserUpdate                                   true  "ID,用户名,头像地址,邮箱,电话,简介"
+// @Param     data  body      request.UserUpdate                                   true  "用户名,头像地址,简介,性别"
 // @Success   200   {object}  response.Response{data=map[string]interface{},msg=string}  "设置用户信息"
 // @Router    /api/user/update [post]
 func UserUpdate(c *gin.Context) {
@@ -274,4 +243,10 @@ func UserUpdate(c *gin.Context) {
 		response.Error(c, utils.Params)
 		return
 	}
+	if err := userService.UserUpdate(utils.GetUserId(c), r); err != nil {
+		global.Log.Error("修改信息失败!", zap.Error(err))
+		response.ErrorMessage(c, utils.ErrorUpdate, "修改用户信息失败")
+		return
+	}
+	response.SuccessMessage(c, "修改成功")
 }

@@ -69,6 +69,17 @@ definitions:
       username:
         type: string
     type: object
+  request.UserUpdate:
+    properties:
+      avatar:
+        type: string
+      gender:
+        type: integer
+      profile:
+        type: string
+      username:
+        type: string
+    type: object
   response.Response:
     properties:
       code:
@@ -118,6 +129,33 @@ paths:
       summary: 获取验证码
       tags:
       - email
+  /api/file/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 上传文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 上传成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 上传用户头像
+      tags:
+      - file
   /api/user/get:
     get:
       consumes:
@@ -247,6 +285,37 @@ paths:
                   type: string
               type: object
       summary: 用户根据邮箱注册
+      tags:
+      - user
+  /api/user/update:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户名,头像地址,简介,性别
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.UserUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 设置用户信息
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 更新用户信息
       tags:
       - user
 securityDefinitions:

@@ -7,7 +7,6 @@ import (
 	"github.com/axliupore/axapi/axapi-backend/model/request"
 	"github.com/axliupore/axapi/axapi-backend/utils"
 	"gorm.io/gorm"
-	"mime/multipart"
 	"time"
 )
 
@@ -66,54 +65,15 @@ func (userService *UserService) UserLoginEmail(r *request.UserLoginEmail) (*mode
 }
 
 // UserUpdate 更新用户信息
-func (userService *UserService) UserUpdate(user model.User) error {
+func (userService *UserService) UserUpdate(id int64, r *request.UserUpdate) error {
 	return global.Db.Model(&model.User{}).
-		Select("update_at", "username", "avatar", "email", "phone", "profile", "birthday", "gender").
-		Where("id = ?", user.Id).
+		Select("update_at", "username", "avatar", "profile", "gender").
+		Where("id = ?", id).
 		Updates(map[string]interface{}{
 			"update_time": time.Now(),
-			"username":    user.Username,
-			"avatar":      user.Avatar,
-			"email":       user.Email,
-			"phone":       user.Phone,
-			"profile":     user.Profile,
-			"gender":      user.Gender,
+			"username":    r.Username,
+			"avatar":      r.Avatar,
+			"profile":     r.Profile,
+			"gender":      r.Gender,
 		}).Error
-}
-
-// UserAvatar 更新用户头像
-func (userService *UserService) UserAvatar(id int64, fileHeader *multipart.FileHeader) error {
-	user, err := userService.GetUser(id)
-	if err != nil {
-		return err
-	}
-
-	// 上传图片到 oss
-	imgURL, err := utils.UploadFile(fileHeader)
-	if err != nil {
-		return err
-	}
-	// 更新用户信息
-	user.Avatar = imgURL
-	if err := userService.UserUpdate(user); err != nil {
-		return err
-	}
-	return nil
-}
-
-// UserAvatarLocal 更新用户头像到本地
-func (userService *UserService) UserAvatarLocal(id int64, fileHeader *multipart.FileHeader) error {
-	user, err := userService.GetUser(id)
-	if err != nil {
-		return err
-	}
-	imgURL, err := utils.SaveFileLocal(fileHeader)
-	if err != nil {
-		return err
-	}
-	user.Avatar = imgURL
-	if err := userService.UserUpdate(user); err != nil {
-		return err
-	}
-	return nil
 }

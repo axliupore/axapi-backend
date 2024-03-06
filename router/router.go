@@ -28,7 +28,7 @@ func Router() *gin.Engine {
 
 	router.Use(middleware.Cors())
 
-	if global.Config.Server.Mode == "public" {
+	if global.Config.Server.Mode != "public" {
 		router.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 

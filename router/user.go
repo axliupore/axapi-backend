@@ -17,8 +17,12 @@ func InitUserRouter(publicGroup *gin.RouterGroup) {
 		userRouter.POST("login/account", api.UserLoginAccount)
 		// 邮箱登录
 		userRouter.POST("login/email", api.UserLoginEmail)
+
+		// 下面的都需要用户身份验证
 		userRouter.Use(middleware.JWT())
 		// 获取用户的登录态
 		userRouter.GET("get", api.GetUser)
+		// 修改用户信息
+		userRouter.POST("update", api.UserUpdate)
 	}
 }
